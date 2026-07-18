@@ -33,10 +33,11 @@ std::vector<Token> Lexer::tokenize() {
 
         if(std::isspace(static_cast<unsigned char>(c))) {
             advance();
-            continue;
+        } else if (c == '"') {
+            tokens.push_back(readString());
+        } else {
+            tokens.push_back(readWord());
         }
-
-        tokens.push_back(readWord());
     }
 
     tokens.push_back({TokenType::EndOfFile, ""});
@@ -64,4 +65,21 @@ Token Lexer::readWord() {
     }
 
     return { TokenType::Identifier, word };
+}
+
+Token Lexer::readString() {
+    advance(); // consume  opening "
+    size_t start = current;
+
+    while(!isAtEnd() && (peek() != '"')) {
+        advance();
+    }
+
+    std::string word = source.substr(start, current - start);
+
+    if(!isAtEnd()) {
+        advance(); //skip ending "
+    }
+
+    return { TokenType::String, word };
 }

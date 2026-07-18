@@ -25,6 +25,10 @@ int main(int argc, char* argv[]) {
             std::cout << "Identifier: ";
             break;
 
+        case TokenType::String:
+            std::cout << "String: ";
+            break;
+            
         case TokenType::EndOfFile:
             std::cout << "EOF";
             break;
