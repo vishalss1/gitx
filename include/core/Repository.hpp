@@ -1,0 +1,10 @@
+#pragma once
+
+#include <string>
+
+class Repository {
+    public:
+        Repository() = default;
+
+        void commit(const std::string& message);
+};

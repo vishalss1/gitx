@@ -18,6 +18,15 @@ gitx/
 │   │   ├── Executor.hpp
 │   │   └── Context.hpp
 │   │
+│   ├── core/
+│   │   ├── Repository.hpp
+│   │   ├── ObjectDatabase.hpp
+│   │   ├── Index.hpp
+│   │   ├── Commit.hpp
+│   │   ├── Tree.hpp
+│   │   ├── Blob.hpp
+│   │   └── RefStore.hpp
+│   │
 │   ├── fs/
 │   │   └── FileReader.hpp
 │   │
@@ -38,6 +47,15 @@ gitx/
 │   ├── runtime/
 │   │   ├── Executor.cpp
 │   │   └── Context.cpp
+│   │
+│   ├── core/
+│   │   ├── Repository.cpp
+│   │   ├── ObjectDatabase.cpp
+│   │   ├── Index.cpp
+│   │   ├── Commit.cpp
+│   │   ├── Tree.cpp
+│   │   ├── Blob.cpp
+│   │   └── RefStore.cpp
 │   │
 │   ├── fs/
 │   │   └── FileReader.cpp
