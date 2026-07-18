@@ -1,5 +1,6 @@
 #include "fs/FileReader.hpp"
 #include "lexer/Lexer.hpp"
+#include "parser/Parser.hpp"
 
 #include <iostream>
 
@@ -14,34 +15,12 @@ int main(int argc, char* argv[]) {
     Lexer lexer(source);
     std::vector<Token> tokens = lexer.tokenize();
 
-    for(const auto& token : tokens) {
-        switch (token.type)
-        {
-        case TokenType::Keyword:
-            std::cout << "Keyword: ";
-            break;
+    Parser parser(tokens);
+    auto ast = parser.parse();
 
-        case TokenType::Identifier:
-            std::cout << "Identifier: ";
-            break;
-
-        case TokenType::String:
-            std::cout << "String: ";
-            break;
-
-        case TokenType::Flag:
-            std::cout << "Flag: ";
-            break;
-            
-        case TokenType::EndOfFile:
-            std::cout << "EOF";
-            break;
-        
-        default:
-            break;
-        }
-
-        std::cout << token.value << '\n';
+    if(ast->type == ASTNodeType::Commit) {
+        auto* commit = static_cast<CommitNode*>(ast.get());
+        std::cout << commit->message << '\n';
     }
 
     return 0;

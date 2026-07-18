@@ -1,6 +1,5 @@
 #include "lexer/Lexer.hpp"
 
-#include <vector>
 #include <cctype>
 
 Lexer::Lexer(const std::string& source): source(source) {

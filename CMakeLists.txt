@@ -10,6 +10,7 @@ add_executable(gitx
     src/main.cpp
     src/fs/FileReader.cpp
     src/lexer/Lexer.cpp
+    src/parser/Parser.cpp
 )
 
 target_include_directories(gitx PRIVATE
