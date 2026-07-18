@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(gitx
     src/main.cpp
     src/fs/FileReader.cpp
+    src/lexer/Lexer.cpp
 )
 
 target_include_directories(gitx PRIVATE
