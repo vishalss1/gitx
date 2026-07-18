@@ -35,6 +35,8 @@ std::vector<Token> Lexer::tokenize() {
             advance();
         } else if (c == '"') {
             tokens.push_back(readString());
+        } else if(c == '-') {
+            tokens.push_back(readFlag());
         } else {
             tokens.push_back(readWord());
         }
@@ -82,4 +84,17 @@ Token Lexer::readString() {
     }
 
     return { TokenType::String, word };
+}
+
+Token Lexer::readFlag() {
+    size_t start = current;
+    advance(); // skip starting -
+
+    while(!isAtEnd() && (std::isalnum(static_cast<unsigned char> (peek())) || peek() == '_')) {
+        advance();
+    }
+
+    std::string word = source.substr(start, current - start);
+
+    return { TokenType::Flag, word };
 }

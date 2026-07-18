@@ -28,6 +28,10 @@ int main(int argc, char* argv[]) {
         case TokenType::String:
             std::cout << "String: ";
             break;
+
+        case TokenType::Flag:
+            std::cout << "Flag: ";
+            break;
             
         case TokenType::EndOfFile:
             std::cout << "EOF";
