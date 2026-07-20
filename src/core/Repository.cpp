@@ -6,20 +6,30 @@
 
 namespace fs = std::filesystem;
 
+Repository::Repository(const fs::path& root) : root(root) {}
+
+fs::path Repository::gitxDir() const {
+    return root / ".gitx";
+}
+
+fs::path Repository::objectsDir() const {
+    return gitxDir() / "objects";
+}
+
+fs::path Repository::refsDir() const {
+    return gitxDir() / "refs" / "heads";
+}
+
+fs::path Repository::headFile() const {
+    return gitxDir() / "HEAD";
+}
+
 void Repository::init() {
+    fs::create_directories(objectsDir());
+    fs::create_directories(refsDir());
 
-    fs::create_directories(".gitx");
-    fs::create_directories(".gitx/objects");
-    fs::create_directories(".gitx/refs/heads");
-
-    std::ofstream head(".gitx/HEAD");
-
+    std::ofstream head(headFile());
     head << "ref: refs/heads/main\n";
 
     std::cout << "Initialized empty Gitx repository.\n";
-}
-
-void Repository::commit(const std::string& message) {
-
-    std::cout << "Commit: " << message << '\n';
 }

@@ -12,6 +12,7 @@ add_executable(gitx
     src/lexer/Lexer.cpp
     src/parser/Parser.cpp
     src/runtime/Executor.cpp
+    src/runtime/Context.cpp
     src/core/Repository.cpp
 )
 

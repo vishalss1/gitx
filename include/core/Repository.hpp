@@ -1,12 +1,19 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 
 class Repository {
     public:
-        Repository() = default;
+        explicit Repository(const std::filesystem::path& root);
 
         void init();
 
-        void commit(const std::string& message);
+        std::filesystem::path gitxDir() const;
+        std::filesystem::path objectsDir() const;
+        std::filesystem::path refsDir() const;
+        std::filesystem::path headFile() const;
+
+    private:
+        std::filesystem::path root;
 };

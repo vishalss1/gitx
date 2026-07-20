@@ -23,7 +23,3 @@ void Executor::execute(const ASTNode& node) {
 void Executor::executeInit(const InitNode&) {
     context.repository.init();
 }
-
-void Executor::executeCommit(const CommitNode& node) {
-    context.repository.commit(node.message);
-}

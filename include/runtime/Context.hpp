@@ -6,8 +6,9 @@
 
 class Context {
     public:
-        Repository repository;
+        Context();
 
-        std::filesystem::path currentWorkingDirectory;
+        std::filesystem::path cwd;
+        Repository repository;
         bool verbose = false;
 };
