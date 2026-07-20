@@ -1,10 +1,14 @@
 #include "fs/FileReader.hpp"
 #include "lexer/Lexer.hpp"
 #include "parser/Parser.hpp"
+#include "runtime/Context.hpp"
+#include "runtime/Executor.hpp"
 
 #include <iostream>
 
 int main(int argc, char* argv[]) {
+    
+    std::cout << "Program started\n";
     if(argc != 2) {
         std::cerr << "Usage: gitx <file.gitx>\n";
         return 1;
@@ -18,10 +22,15 @@ int main(int argc, char* argv[]) {
     Parser parser(tokens);
     auto ast = parser.parse();
 
-    if(ast->type == ASTNodeType::Commit) {
-        auto* commit = static_cast<CommitNode*>(ast.get());
-        std::cout << commit->message << '\n';
+    Context context;
+
+    Executor executor(context);
+
+    for(const auto& token: tokens) {
+        std::cout << token.value << '\n';
     }
+
+    executor.execute(*ast);
 
     return 0;
 }

@@ -12,5 +12,7 @@ class Executor {
     private:
         Context& context;
 
+        void executeInit(const InitNode&);
+
         void executeCommit(const CommitNode& node);
 };

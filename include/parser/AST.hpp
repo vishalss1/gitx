@@ -4,7 +4,8 @@
 #include <string>
 
 enum class ASTNodeType {
-    Commit
+    Init,
+    Commit,
 };
 
 class ASTNode {
@@ -20,4 +21,9 @@ class CommitNode : public ASTNode {
         explicit CommitNode(std::string message) : ASTNode(ASTNodeType::Commit), message(std::move(message)) {}
 
         std::string message;
+};
+
+class InitNode : public ASTNode {
+    public:
+        InitNode() : ASTNode(ASTNodeType::Init) {}
 };

@@ -1,99 +1,169 @@
 #include "lexer/Lexer.hpp"
 
 #include <cctype>
+#include <unordered_map>
 
-Lexer::Lexer(const std::string& source): source(source) {
-
-}
+Lexer::Lexer(const std::string& source)
+    : source(source) {}
 
 bool Lexer::isAtEnd() const {
     return current >= source.size();
 }
 
 char Lexer::peek() const {
-    if(isAtEnd())
+
+    if (isAtEnd())
         return '\0';
 
     return source[current];
 }
 
 char Lexer::advance() {
-    if(isAtEnd())
+
+    if (isAtEnd())
         return '\0';
 
     return source[current++];
 }
 
+void Lexer::skipWhitespace() {
+
+    while (!isAtEnd() &&
+           std::isspace(static_cast<unsigned char>(peek()))) {
+        advance();
+    }
+}
+
+KeywordType Lexer::getKeywordType(const std::string& word) const {
+
+    static const std::unordered_map<std::string, KeywordType> keywords = {
+        {"init",     KeywordType::Init},
+        {"add",      KeywordType::Add},
+        {"commit",   KeywordType::Commit},
+        {"status",   KeywordType::Status},
+        {"checkout", KeywordType::Checkout},
+        {"branch",   KeywordType::Branch},
+        {"merge",    KeywordType::Merge},
+        {"log",      KeywordType::Log},
+    };
+
+    auto it = keywords.find(word);
+
+    if (it != keywords.end())
+        return it->second;
+
+    return KeywordType::None;
+}
+
+FlagType Lexer::getFlagType(const std::string& flag) const {
+
+    static const std::unordered_map<std::string, FlagType> flags = {
+        {"-m",        FlagType::Message},
+        {"--cached",  FlagType::Cached},
+        {"--force",   FlagType::Force},
+        {"--all",     FlagType::All},
+        {"--amend",   FlagType::Amend},
+    };
+
+    auto it = flags.find(flag);
+
+    if (it != flags.end())
+        return it->second;
+
+    return FlagType::None;
+}
+
 std::vector<Token> Lexer::tokenize() {
+
     std::vector<Token> tokens;
 
-    while(!isAtEnd()) {
+    while (!isAtEnd()) {
+
+        skipWhitespace();
+
+        if (isAtEnd())
+            break;
+
         char c = peek();
 
-        if(std::isspace(static_cast<unsigned char>(c))) {
-            advance();
-        } else if (c == '"') {
+        if (c == '"') {
             tokens.push_back(readString());
-        } else if(c == '-') {
+        }
+        else if (c == '-') {
             tokens.push_back(readFlag());
-        } else {
+        }
+        else {
             tokens.push_back(readWord());
         }
     }
 
-    tokens.push_back({TokenType::EndOfFile, ""});
+    tokens.emplace_back(TokenType::EndOfFile, "");
 
     return tokens;
 }
 
 Token Lexer::readWord() {
+
     size_t start = current;
 
-    while(!isAtEnd() && (std::isalnum(static_cast<unsigned char>(peek())) || peek() == '_')) {
+    while (!isAtEnd() &&
+          (std::isalnum(static_cast<unsigned char>(peek())) ||
+           peek() == '_')) {
+
         advance();
     }
 
     std::string word = source.substr(start, current - start);
 
-    if( word == "commit" || 
-        word == "branch" ||
-        word == "checkout" ||
-        word == "merge" ||
-        word == "tag" ||
-        word == "remote"
-    ) {
-        return { TokenType::Keyword, word };
+    KeywordType keyword = getKeywordType(word);
+
+    if (keyword != KeywordType::None) {
+        return Token(TokenType::Keyword, word, keyword);
     }
 
-    return { TokenType::Identifier, word };
+    return Token(TokenType::Identifier, word);
 }
 
 Token Lexer::readString() {
-    advance(); // consume  opening "
+
+    advance(); // opening "
+
     size_t start = current;
 
-    while(!isAtEnd() && (peek() != '"')) {
+    while (!isAtEnd() && peek() != '"') {
         advance();
     }
 
     std::string word = source.substr(start, current - start);
 
-    if(!isAtEnd()) {
-        advance(); //skip ending "
-    }
+    if (!isAtEnd())
+        advance(); // closing "
 
-    return { TokenType::String, word };
+    return Token(TokenType::String, word);
 }
 
 Token Lexer::readFlag() {
-    size_t start = current;
-    advance(); // skip starting -
 
-    while(!isAtEnd() && (std::isalnum(static_cast<unsigned char> (peek())) || peek() == '_')) {
+    size_t start = current;
+
+    advance(); // first '-'
+
+    while (!isAtEnd() &&
+          (std::isalnum(static_cast<unsigned char>(peek())) ||
+           peek() == '-' ||
+           peek() == '_')) {
+
         advance();
     }
 
-    std::string word = source.substr(start, current - start);
+    std::string flag = source.substr(start, current - start);
 
-    return { TokenType::Flag, word };
+    FlagType flagType = getFlagType(flag);
+
+    return Token(
+        TokenType::Flag,
+        flag,
+        KeywordType::None,
+        flagType
+    );
 }
